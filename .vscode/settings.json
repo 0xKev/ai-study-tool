@@ -1,8 +1,0 @@
-{
-    "launch": {
-
-        "configurations": [],
-        "compounds": [],
-        "terminal.integrated.shellArgs.windows": ["-ExecutionPolicy", "Bypass"]
-    }
-}
