@@ -178,3 +178,10 @@ cython_debug/
 *temp*
 *testing*
 pdf_files/*
+to-do.txt
+*notes*.txt
+test.py
+
+# data save files
+embeddings.txt
+text_hashes.csv

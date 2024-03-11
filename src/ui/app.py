@@ -1,8 +1,11 @@
 import streamlit as st
-from pdf_utils import PdfProcessor, get_text_chunks
+from ..data_processing.pdf_utils import PdfProcessor # .. used to traverse previous directory, additional dots for more directories
+from ..data_processing.text_embedder import get_text_chunks # single . used to traverse up one directory to src
 import tempfile # to store pdfs in temp folder so I can have a file path for now to feed to PdfProcessor
 import os
 import time
+
+
 
 def progress_bar():
     progress_text = "Your PDF is being processed. Please wait..."
@@ -13,7 +16,7 @@ def progress_bar():
     time.sleep(1)
     my_bar.empty()
         
-def main():
+def main() -> None:
     st.set_page_config(page_title="Noteify")
 
     #st.title("Chat with PDF file.")

@@ -1,7 +1,8 @@
 # will unpack the pdf to text
-import pdfplumber
+import pdfplumber 
 import time
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+
 
 '''
 user uploads pdf
@@ -10,10 +11,12 @@ pdf class features:
 - translates entire pdf to txt
 - fetches txt for any page user requests
 
-'''
-h
+''' 
 
 class PdfProcessor:
+    '''
+    class to process pdf files into text
+    '''
     #constructor
     def __init__(self, pdf_file: str, uploaded_by: str = 'test'): # uploaded by type can be UserAccount instead so the pdf's are linked to user ID
         self.file_path = pdf_file
@@ -25,12 +28,14 @@ class PdfProcessor:
             with pdfplumber.open(self.file_path) as pdf:
                 self.totalPages = len(pdf.pages)
 
+        except TypeError as type_error:
+            
+            print(f"Invalid file type: {type_error}")
+
         except FileNotFoundError as invalid_file_path:
 
-            return (f"File not found: {invalid_file_path}")
+            print(f"File not found: {invalid_file_path}")
         
-        except TypeError as type_error:
-            return (f"Invalid file type: {type_error}")
 
     def NumPages(self) -> int:
         return self.totalPages
@@ -77,34 +82,7 @@ class PdfProcessor:
         return extracted_text
     
 
-class NoteSummarizer:
-    pass
-
-def get_text_chunks(raw_text: str) -> list:
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size = 1000,
-        chunk_overlap = 200,
-        length_function = len
-    )
-
-    chunks = text_splitter.split_text(raw_text)
-    return chunks
 
 
 if __name__ == "__main__":
-    start_time = time.time()
-
-    pdf_file_location = "..\pdf_files\The_Happy_Prince by Oscar Wilde.pdf"
-    pdf_file = PdfProcessor(pdf_file_location)
-
-    raw_text = pdf_file.getPages(1, 5)
-    text_chunks = get_text_chunks(raw_text)
-
-    #print(raw_text.getPages(1, 5))
-    
-    for i in range(len(text_chunks)):
-        print(f"Chunk {i + 1}: {text_chunks[i]}\n")
-
-    print("end time:", time.time() - start_time)
-    
-    #print(the_happy_prince.getAll)
+    pass
