@@ -14,7 +14,7 @@ if __name__ == "__main__":
     txt_vector_db = TextVectorDatabase(user_id=user_id, file_hash=file_hash)
 
     # TEMPORARY! - i dont want to perform this twice, either save page # with each chunk or a seperate dict/csv with chunk # and original text portion
-    raw_text: str = pdf_utils.PdfProcessor("D:/Documents/Coding/My projects/ai-study-tool/pdf_files/The_Happy_Prince by Oscar Wilde.pdf", uploaded_by="kevin").getAll()
+    raw_text: str = pdf_utils.PdfProcessor("pdf_files\The_Happy_Prince by Oscar Wilde.pdf", uploaded_by="kevin").getAll()
     chunks: list[str] = text_embedder.get_text_chunks(raw_text)
 
     if not is_file_uploaded(user_id=user_id, file_md5_hash=file_hash):
