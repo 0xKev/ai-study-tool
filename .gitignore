@@ -175,7 +175,7 @@ dmypy.json
 cython_debug/
 
 # My own files to ignore
-*temp*
+temp.py
 *testing*
 pdf_files/*
 to-do.txt
