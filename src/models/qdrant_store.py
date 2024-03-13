@@ -21,7 +21,7 @@ import os
 class TextVectorDatabase:
     def __init__(self, user_id: str, file_hash: str):
         load_dotenv()
-        self.__qdrant_api_key = os.getenv("QDRANT-API-KEY")
+        self.__QDRANT_API_KEY = os.getenv("QDRANT-API-KEY")
 
         self.collection_name = "text collection"
         self.user_id = user_id
@@ -30,15 +30,11 @@ class TextVectorDatabase:
             location="localhost",
             port=6333,
             https=True,
-            api_key=self.__qdrant_api_key
+            api_key=self.__QDRANT_API_KEY
         )
+        self._unique_id = self.user_id + self.file_hash[:7]
 
 
-
-    def _get_unique_id(self) -> str:
-        # used for payload
-        unique_id = self.user_id + self.file_hash[:7]
-        return unique_id
 
     def _collection_not_exists(self) -> bool:
         all_collections = self.client.get_collections().collections
@@ -48,12 +44,17 @@ class TextVectorDatabase:
         return not_exists
 
 
-    def upload_vectors_qdrant(self, embeddings: "numpy") -> None:
+    def upload_vectors_qdrant(self, embeddings: list) -> None:
     # Create collection if doesn't exist
         if self._collection_not_exists():
+            print(self.collection_name, "does not exist! Creating now...")
             self.client.create_collection(
                 collection_name=self.collection_name,
-                vectors_config=VectorParams(size=4096, distance=Distance.COSINE)
+                vectors_config=VectorParams(size=4096, distance=Distance.COSINE),
+                hnsw_config=models.HnswConfigDiff( # used to index vectors for each user indepdently instead of global
+                    payload_m=16, 
+                    m=0 # disables building global index for whole collection
+                )
             ) # change recreate to create - only using recreate for testing rn
             print(f"Collection created with the parameters (collection_name={self.collection_name}, vector_size=4096, distance=Distance.COSINE)")
         
@@ -68,7 +69,15 @@ class TextVectorDatabase:
         #print("unique id:", unique_id)
         #not sure how to use my own unique ids instead of auto generated
         #chunk_num: list = [chunk for chunk in range(num_of_data)]
-            metadata: list[dict] = [{"user_id": self.user_id, "file_hash": self.file_hash, "chunk": num} for num in range(num_of_data)]
+            metadata: list[dict] = [
+                {
+                    "user_id": self.user_id, 
+                    "file_hash": self.file_hash, 
+                    "chunk": num,
+                    "unique_id": self._unique_id 
+                } for num in range(num_of_data) 
+            ]
+
         
             self.client.upload_collection(
                 collection_name=self.collection_name,
@@ -76,7 +85,18 @@ class TextVectorDatabase:
                 payload=metadata,
             )
 
+            self.create_payload_index()
+
             print("Success")
+
+    def create_payload_index(self):
+        #https://qdrant.tech/documentation/concepts/indexing/#payload-index 
+        # the more different values a payload value has, the more efficiently the index will be used.
+        self.client.create_payload_index(
+            collection_name=self.collection_name,
+            field_name="unique_id",
+            field_schema=models.PayloadSchemaType.KEYWORD
+        )
 
     def search(self, query_vector: list):
         search_result = self.client.search(
@@ -84,17 +104,11 @@ class TextVectorDatabase:
             query_filter=models.Filter(
                 must=[
                     models.FieldCondition(
-                        key="user_id",
+                        key="unique_id",
                         match=models.MatchValue(
-                            value=self.user_id
+                            value=self._unique_id
                         )
                     ),
-                    models.FieldCondition(
-                        key="file_hash",
-                        match=models.MatchValue(
-                            value=self.file_hash
-                        )
-                    )
                 ]
             ),
             query_vector=query_vector,

@@ -59,18 +59,19 @@ def is_file_uploaded(user_id: str, file_md5_hash: str) -> bool:
     is_exist: bool = False
     user_row: str = f"{user_id};{file_md5_hash}"
 
-    with open(csv_file_path, "r") as csvfile:
-        reader: csv = csv.reader(csvfile)
-        all_hashes: list = ["".join(hashes) for hashes in reader][1::]
-        #print("all hashes:", all_hashes)
-        
-        if user_row in all_hashes:
-            is_exist = True
-        
-        print("File already exists under user id:", user_id)
-        #print(all_hashes)
-
-    return is_exist
+    try:
+        with open(csv_file_path, "r") as csvfile:
+            reader: csv = csv.reader(csvfile)
+            all_hashes: list = ["".join(hashes) for hashes in reader][1::]
+            #print("all hashes:", all_hashes)
+            
+            if user_row in all_hashes:
+                is_exist = True
+            
+            print("File already exists under user id:", user_id)
+            #print(all_hashes)
+    except:
+        return is_exist
 
 
 

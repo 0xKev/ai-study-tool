@@ -54,12 +54,12 @@ def get_text_embeddings(text: list = ["Birds can fly."]) -> tuple[list, list]:
         outputs = model(**batch_dict)
         embeddings = last_token_pool(outputs.last_hidden_state, batch_dict['attention_mask'])
         embeddings = F.normalize(embeddings, p=2, dim=1)
-        embeddings = embeddings.detach().cpu().numpy()
+        embeddings = embeddings.detach().cpu().numpy() 
 
         #print(f"vector size: {model.config.hidden_size}")
         #print(f"embeddings: {embeddings}")
     
-    return embeddings.tolist(), text
+    return embeddings, text
 
 if __name__ == "__main__":
     print("Running get_text_embeddings()\n")
