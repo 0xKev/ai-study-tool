@@ -178,8 +178,6 @@ cython_debug/
 temp.py
 *testing*
 pdf_files/*
-to-do.txt
-*notes*.txt
 test.py
 
 # data save files

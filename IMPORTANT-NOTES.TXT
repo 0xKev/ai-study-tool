@@ -1,0 +1,18 @@
+TO SOLVE MKCERT HTTPS ISSUES:
+
+COPY MKCERT CA ROOT TO .venv\Lib\site-packages\certifi\cacert.pem
+
+certifi is where the certificates are managed
+
+REASONING:
+
+When establishing a secure HTTPS connection, your Python client (using the QdrantClient
+library) needs to verify the server's certificate to ensure it's genuine.
+
+To verify the server's certificate, your client needs to trust the Certificate Authority (CA) that issued it. 
+The error indicates that your system doesn't have the necessary 
+CA certificates in its trusted certificate store to form a trust chain back to a known root CA
+
+While mkcert does a great job of providing trust for locally issued certificates in web browsers, 
+it seems it might not automatically install the
+mkcert root CA into the certificate store used by Python and the QdrantClient library

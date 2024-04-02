@@ -1,0 +1,39 @@
+features:
+
+ - chat bot for pdf
+ - pdf to notes
+ - pdf to flashcards
+ - create a quiz based off pdf
+
+then do that for audio and youtube link
+show transcript for these two as well
+
+########################
+
+text processors:
+    - support other file types ( txt, docx, word, etc)
+
+web scraper: 
+    - scrape website text
+
+#########################
+
+to reduce load:
+
+- save embedding in vector store and only embedd pdf if not in vector store (done)
+- save page number with each embedding to reduce load when re-processing to find original text by chunk, no need to do entire file
+    - OR save text chunks to a file and retrieve later (preferred bc storage > efficient processing for large batches)
+
+
+########################
+
+Qdrant Structure:
+    - One pdf per collection
+    - metadata (user_id, pdf_name)
+
+
+########################
+
+User registration to generate user id or based off cookies
+
+########################
